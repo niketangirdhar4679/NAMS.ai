@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
+import joblib
 from src.NAMS_hotspot_model import predict_hotspots
 from src.NAMS_executive_brief import create_executive_brief
 from src.NAMS_preventative_measures import suggest_preventative_measures
@@ -50,6 +51,17 @@ def recommend_policies_route():
         return jsonify({'policy_recommendations': policies})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/predict_accident')
+def predict_accident():
+    model = joblib.load('models/accident_prediction_model.pkl')
+    # Placeholder for prediction logic
+    prediction = model.predict([[1, 0, 2, 1]])  # Example input
+    return f"Predicted Accident Severity: {prediction[0]}"
 
 if __name__ == '__main__':
     app.run(debug=True)
